@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynasty Trust Architect 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:#080b18;--surface:#0f1225;--surface2:#161b30;--surface3:#1d2340;
+            --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+            --text:#e8ecf4;--text-muted:#6e7a99;--text-soft:#a8b2cc;
+            --accent:#7c6fff;--accent2:#00e5b5;--accent3:#ff6b6b;
+            --accent4:#ffd166;--accent5:#60a5fa;--accent6:#f472b6;
+            --glow:rgba(124,111,255,0.2);--glow2:rgba(0,229,181,0.15);
+            --radius:14px;--radius-sm:9px;
+            --shadow:0 8px 40px rgba(0,0,0,0.5);--shadow-sm:0 4px 20px rgba(0,0,0,0.35);
+        }
+        [data-theme="light"]{--bg:#f0f3fb;--surface:#fff;--surface2:#eef1fa;--surface3:#e4e8f5;--border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.13);--text:#111827;--text-muted:#6b7280;--text-soft:#4b5563;--glow:rgba(124,111,255,0.08);--glow2:rgba(0,229,181,0.08);--shadow:0 4px 24px rgba(0,0,0,0.1);--shadow-sm:0 2px 12px rgba(0,0,0,0.08);}
+        *{box-sizing:border-box;margin:0;padding:0;}
+        html{scroll-behavior:smooth;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:28px 20px;transition:background .3s,color .3s;}
+        body::before{content:'';position:fixed;inset:0;z-index:-1;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:.45;}
+        .wrapper{max-width:1160px;margin:auto;}
+        header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:16px;}
+        .logo{display:flex;align-items:center;gap:14px;}
+        .logo-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4em;box-shadow:0 0 24px var(--glow);}
+        .logo-text h1{font-family:'Space Grotesk',sans-serif;font-size:1.45em;font-weight:700;background:linear-gradient(135deg,var(--text) 40%,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .logo-text span{font-size:.72em;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;}
+        .header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+        .hbtn{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;font-size:.82em;font-family:'Space Grotesk',sans-serif;font-weight:600;transition:all .2s;white-space:nowrap;}
+        .hbtn:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 14px var(--glow);}
+        select.hbtn{padding:8px 12px;}
+        .phase-banner{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px;}
+        .phase-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden;transition:box-shadow .3s;}
+        .phase-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+        .phase-card.p1::before{background:linear-gradient(90deg,var(--accent),#b3acff);}
+        .phase-card.p2::before{background:linear-gradient(90deg,var(--accent2),#6effdf);}
+        .phase-card.p3::before{background:linear-gradient(90deg,var(--accent4),#ffe89f);}
+        .phase-card.active-phase{box-shadow:0 0 0 1px var(--accent2),0 0 24px var(--glow2);}
+        .phase-card h5{font-size:.68em;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:5px;font-family:'Space Grotesk',sans-serif;}
+        .phase-card .phase-title{font-family:'Space Grotesk',sans-serif;font-size:.92em;font-weight:700;margin-bottom:8px;}
+        .phase-alloc{display:flex;gap:6px;flex-wrap:wrap;}
+        .alloc-pill{font-size:.68em;padding:3px 8px;border-radius:20px;font-weight:600;font-family:'Space Grotesk',sans-serif;}
+        .pill-growth{background:rgba(124,111,255,.18);color:var(--accent);}
+        .pill-income{background:rgba(0,229,181,.15);color:var(--accent2);}
+        .pill-alt{background:rgba(255,209,102,.15);color:var(--accent4);}
+        .pill-note{font-size:.68em;color:var(--text-muted);margin-top:4px;width:100%;}
+        .tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;}
+        .tab{padding:10px 22px;border-radius:var(--radius-sm);cursor:pointer;font-size:.84em;font-weight:600;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-family:'Space Grotesk',sans-serif;transition:all .2s;}
+        .tab.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 18px var(--glow);}
+        .tab:hover:not(.active){border-color:var(--border2);color:var(--text);}
+        .panel{display:none;}.panel.active{display:block;}
+        .controls-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+        .ctrl{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);}
+        .ctrl label{font-size:.72em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);display:block;margin-bottom:8px;}
+        .ctrl .hint{font-size:.69em;color:var(--text-muted);margin-top:5px;line-height:1.4;}
+        .ctrl .rval{font-family:'Space Grotesk',sans-serif;font-size:1.1em;font-weight:700;color:var(--accent);margin-bottom:5px;}
+        input[type=number],input[type=range],select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Inter',sans-serif;font-size:.93em;padding:8px 10px;outline:none;transition:border .2s;}
+        input[type=number]:focus,select:focus{border-color:var(--accent);}
+        input[type=range]{padding:4px 0;cursor:pointer;accent-color:var(--accent);}
+        .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px;}
+        .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
+        .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+        .stat-card.sc1::before{background:linear-gradient(90deg,#00e5b5,#6effdf);}
+        .stat-card.sc2::before{background:linear-gradient(90deg,#7c6fff,#b3acff);}
+        .stat-card.sc3::before{background:linear-gradient(90deg,#ffd166,#ffe89f);}
+        .stat-card.sc4::before{background:linear-gradient(90deg,#ff6b6b,#ff9f9f);}
+        .stat-card.sc5::before{background:linear-gradient(90deg,#60a5fa,#93c5fd);}
+        .stat-card.sc6::before{background:linear-gradient(90deg,#f472b6,#f9a8d4);}
+        .stat-card h4{font-size:.68em;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:8px;font-weight:600;}
+        .stat-card .val{font-family:'Space Grotesk',sans-serif;font-size:1.45em;font-weight:700;line-height:1.2;}
+        .stat-card .sub{font-size:.7em;color:var(--text-muted);margin-top:5px;}
+        .badge{display:inline-block;font-size:.63em;padding:3px 8px;border-radius:20px;font-weight:700;margin-top:7px;background:rgba(124,111,255,.2);color:var(--accent);}
+        .tip-anchor{position:absolute;top:12px;right:12px;}
+        .tip-icon{width:16px;height:16px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);font-size:.6em;font-weight:700;display:inline-flex;align-items:center;justify-content:center;cursor:help;transition:all .2s;}
+        .tip-icon:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+        .tip-box{display:none;position:absolute;bottom:calc(100% + 8px);right:0;width:210px;background:var(--surface3);color:var(--text-soft);border:1px solid rgba(124,111,255,.3);border-radius:10px;padding:10px 13px;font-size:.74em;line-height:1.55;z-index:999;box-shadow:0 8px 30px rgba(0,0,0,.5);pointer-events:none;}
+        .tip-box strong{color:var(--accent);display:block;margin-bottom:3px;}
+        .tip-icon:hover + .tip-box{display:block;}
+        .chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);margin-bottom:24px;}
+        .chart-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+        .chart-header-left h3{font-family:'Space Grotesk',sans-serif;font-size:1.05em;font-weight:700;}
+        .chart-header-left p{font-size:.75em;color:var(--text-muted);margin-top:3px;}
+        .chart-btns{display:flex;gap:7px;flex-wrap:wrap;}
+        .cbtn{font-size:.74em;padding:5px 13px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text-muted);cursor:pointer;font-weight:500;transition:all .2s;}
+        .cbtn.active,.cbtn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+        .trust-featured{background:linear-gradient(135deg,rgba(0,229,181,.08),rgba(124,111,255,.06));border:1px solid rgba(0,229,181,.25);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;display:flex;align-items:flex-start;gap:16px;}
+        .trust-featured .tf-icon{font-size:2em;flex-shrink:0;}
+        .trust-featured h3{font-family:'Space Grotesk',sans-serif;font-size:1.05em;font-weight:700;color:var(--accent2);margin-bottom:5px;}
+        .trust-featured p{font-size:.82em;color:var(--text-soft);line-height:1.65;}
+        .trust-featured .tf-pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
+        .tf-pill{font-size:.68em;padding:4px 10px;border-radius:20px;font-weight:600;background:rgba(0,229,181,.12);color:var(--accent2);border:1px solid rgba(0,229,181,.2);}
+        .annotation{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 9px 9px 0;padding:13px 17px;font-size:.81em;color:var(--text-soft);margin-bottom:20px;line-height:1.6;}
+        .annotation strong{color:var(--text);}
+        .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm);overflow-x:auto;}
+        .table-wrap h3{font-family:'Space Grotesk',sans-serif;font-size:1em;font-weight:700;margin-bottom:16px;}
+        table{width:100%;border-collapse:collapse;font-size:.81em;}
+        th{text-align:left;padding:9px 13px;background:var(--surface2);color:var(--text-muted);font-weight:600;font-size:.72em;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+        td{padding:10px 13px;border-bottom:1px solid var(--border);}
+        tr:last-child td{border-bottom:none;}
+        tr:hover td{background:var(--surface2);}
+        .positive{color:var(--accent2);font-weight:600;}
+        .negative{color:var(--accent3);font-weight:600;}
+        .hl-row td{background:rgba(0,229,181,.05)!important;}
+        .glide-row td{background:rgba(124,111,255,.05)!important;font-style:italic;}
+        .phase-tag{display:inline-block;font-size:.65em;padding:2px 7px;border-radius:10px;font-weight:700;vertical-align:middle;}
+        .pt1{background:rgba(124,111,255,.18);color:var(--accent);}
+        .pt2{background:rgba(0,229,181,.15);color:var(--accent2);}
+        .pt3{background:rgba(255,209,102,.15);color:var(--accent4);}
+        .scenario-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+        .scenario-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);}
+        .scenario-card h4{font-family:'Space Grotesk',sans-serif;font-size:.85em;font-weight:700;margin-bottom:14px;}
+        .sc-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:.82em;}
+        .sc-row .sc-label{color:var(--text-soft);}
+        .sc-row .sc-val{font-weight:700;}
+        .prog-bar{background:var(--surface2);border-radius:4px;height:5px;margin-bottom:10px;overflow:hidden;}
+        .prog-fill{height:100%;border-radius:4px;transition:width .7s ease;}
+        .mc-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;}
+        .mc-leg-item{display:flex;align-items:center;gap:7px;font-size:.76em;color:var(--text-soft);}
+        .mc-leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+        .toggle-row{display:flex;align-items:center;gap:10px;font-size:.82em;}
+        .toggle{position:relative;width:38px;height:21px;}
+        .toggle input{opacity:0;width:0;height:0;}
+        .tog-slider{position:absolute;cursor:pointer;inset:0;background:var(--surface2);border-radius:20px;border:1px solid var(--border2);transition:.3s;}
+        .tog-slider::before{content:'';position:absolute;width:15px;height:15px;left:2px;top:2px;border-radius:50%;background:var(--text-muted);transition:.3s;}
+        input:checked+.tog-slider{background:var(--accent);border-color:var(--accent);}
+        input:checked+.tog-slider::before{transform:translateX(17px);background:#fff;}
+        .thesis-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px;}
+        .thesis-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm);}
+        .thesis-card h3{font-family:'Space Grotesk',sans-serif;font-size:.95em;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:9px;}
+        .thesis-card p{font-size:.81em;color:var(--text-soft);line-height:1.7;margin-bottom:10px;}
+        .thesis-card ul{padding-left:0;list-style:none;}
+        .thesis-card ul li{font-size:.8em;color:var(--text-soft);padding:6px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;line-height:1.55;}
+        .thesis-card ul li:last-child{border-bottom:none;}
+        .thesis-card ul li::before{content:'›';color:var(--accent2);font-weight:700;flex-shrink:0;margin-top:1px;}
+        .hems-box{background:linear-gradient(135deg,rgba(96,165,250,.07),rgba(124,111,255,.05));border:1px solid rgba(96,165,250,.2);border-radius:var(--radius);padding:20px 22px;margin-bottom:18px;}
+        .hems-box h3{font-family:'Space Grotesk',sans-serif;font-size:.95em;font-weight:700;color:var(--accent5);margin-bottom:10px;}
+        .hems-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px;}
+        .hems-item{background:var(--surface2);border-radius:9px;padding:12px 14px;}
+        .hems-item .hi-label{font-size:.67em;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin-bottom:4px;font-weight:600;}
+        .hems-item .hi-val{font-family:'Space Grotesk',sans-serif;font-size:.92em;font-weight:700;}
+        .hems-item .hi-note{font-size:.68em;color:var(--text-muted);margin-top:3px;line-height:1.4;}
+        .unitrust-bar{background:var(--surface2);border-radius:9px;padding:14px 16px;margin-top:12px;}
+        .unitrust-bar .ub-label{font-size:.72em;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;}
+        .ub-track{background:var(--surface3);border-radius:4px;height:8px;overflow:hidden;}
+        .ub-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:4px;transition:width .5s;}
+        .ub-note{font-size:.7em;color:var(--text-muted);margin-top:6px;}
+        .perp-note{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;display:flex;gap:14px;align-items:flex-start;}
+        .perp-note .pn-icon{font-size:1.4em;flex-shrink:0;}
+        .perp-note h4{font-family:'Space Grotesk',sans-serif;font-size:.88em;font-weight:700;margin-bottom:5px;}
+        .perp-note p{font-size:.78em;color:var(--text-soft);line-height:1.6;}
+        .state-pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;}
+        .state-pill{font-size:.67em;padding:3px 9px;border-radius:12px;background:rgba(0,229,181,.12);color:var(--accent2);border:1px solid rgba(0,229,181,.2);font-weight:600;}
+        .glide-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:24px;box-shadow:var(--shadow-sm);}
+        .glide-visual h3{font-family:'Space Grotesk',sans-serif;font-size:1em;font-weight:700;margin-bottom:16px;}
+        .glide-track{height:40px;background:var(--surface2);border-radius:8px;overflow:hidden;display:flex;margin-bottom:8px;}
+        .glide-seg{display:flex;align-items:center;justify-content:center;font-size:.68em;font-weight:700;transition:width .5s;font-family:'Space Grotesk',sans-serif;color:rgba(255,255,255,.85);}
+        .glide-seg.gs-growth{background:linear-gradient(135deg,#5b52e0,#7c6fff);}
+        .glide-seg.gs-income{background:linear-gradient(135deg,#00b894,#00e5b5);}
+        .glide-seg.gs-alt{background:linear-gradient(135deg,#d4a017,#ffd166);}
+        .glide-labels{display:flex;justify-content:space-between;font-size:.68em;color:var(--text-muted);}
+        .disclaimer{font-size:.72em;color:var(--text-muted);text-align:center;margin-top:32px;padding:16px;border-top:1px solid var(--border);line-height:1.6;}
+        @media(max-width:700px){.scenario-grid,.thesis-layout{grid-template-columns:1fr;}.phase-banner{grid-template-columns:1fr;}header{flex-direction:column;align-items:flex-start;}.trust-featured{flex-direction:column;}}
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+<header>
+    <div class="logo">
+        <div class="logo-icon">&#127963;</div>
+        <div class="logo-text">
+            <h1>Dynasty Trust Architect</h1>
+            <span>Single-Fund Family Pot Trust &middot; Multi-Generational Simulator &middot; 2026</span>
+        </div>
+    </div>
+    <div class="header-right">
+        <select class="hbtn" id="presetSel" onchange="loadPreset(this.value)">
+            <option value="">Load Preset</option>
+            <option value="founding">Founding ($4.5M)</option>
+            <option value="conservative">Conservative ($1M)</option>
+            <option value="aggressive">Aggressive ($10M)</option>
+        </select>
+        <button class="hbtn" onclick="runMonteCarlo()">&#127922; Run Monte Carlo</button>
+        <button class="hbtn" onclick="toggleTheme()">&#9728;&#65039; / &#127769;</button>
+    </div>
+</header>
+
+<div class="phase-banner">
+    <div class="phase-card p1" id="phaseCard0">
+        <h5>Phase 1 &middot; Years 0&ndash;20</h5>
+        <div class="phase-title">Accumulation</div>
+        <div class="phase-alloc">
+            <span class="alloc-pill pill-growth">70% Growth</span>
+            <span class="alloc-pill pill-alt">30% Alt.</span>
+        </div>
+        <div class="pill-note">Principal migrates in over 10 yrs &middot; No withdrawals</div>
+    </div>
+    <div class="phase-card p2" id="phaseCard1">
+        <h5>Phase 2 &middot; Years 20&ndash;50</h5>
+        <div class="phase-title">Distribution</div>
+        <div class="phase-alloc">
+            <span class="alloc-pill pill-growth">60% Growth</span>
+            <span class="alloc-pill pill-income">25% Income</span>
+            <span class="alloc-pill pill-alt">15% Alt.</span>
+        </div>
+        <div class="pill-note">Unitrust &le;4%/yr &middot; 10-yr glide transition</div>
+    </div>
+    <div class="phase-card p3" id="phaseCard2">
+        <h5>Phase 3 &middot; 50+ Years</h5>
+        <div class="phase-title">Legacy</div>
+        <div class="phase-alloc">
+            <span class="alloc-pill pill-growth">60% Growth</span>
+            <span class="alloc-pill pill-income">25% Income</span>
+            <span class="alloc-pill pill-alt">15% Alt.</span>
+        </div>
+        <div class="pill-note">Revisited per generation</div>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tab active" onclick="switchTab('simulator',this)">Simulator</div>
+    <div class="tab" onclick="switchTab('montecarlo',this)">Monte Carlo</div>
+    <div class="tab" onclick="switchTab('breakdown',this)">Year Breakdown</div>
+    <div class="tab" onclick="switchTab('scenarios',this)">Scenario Analysis</div>
+    <div class="tab" onclick="switchTab('strategy',this)">Trust Strategy</div>
+</div>
+
+<!-- SIMULATOR -->
+<div id="tab-simulator" class="panel active">
+    <div class="trust-featured">
+        <div class="tf-icon">&#127963;</div>
+        <div>
+            <h3>Single-Fund Dynasty Trust (Family Pot Trust) &mdash; Recommended Structure</h3>
+            <p>A perpetual, irrevocable trust. Total principal migrates in evenly over 10 years. No withdrawals for the first 20 years. Unitrust capped at 4%/yr thereafter. Managed by institutional trustee(s).</p>
+            <div class="tf-pills">
+                <span class="tf-pill">Spendthrift Clause</span><span class="tf-pill">HEMS Standard</span>
+                <span class="tf-pill">Unitrust &le;4%/yr</span><span class="tf-pill">Estate Tax Bypass</span>
+                <span class="tf-pill">10-Year Migration</span><span class="tf-pill">No Yr 0&ndash;20 Withdrawal</span>
+            </div>
+        </div>
+    </div>
+    <div class="controls-grid">
+        <div class="ctrl">
+            <label>Total Principal Target ($)</label>
+            <input type="number" id="principal" value="4500000" oninput="calculate()">
+            <div class="hint">Migrated evenly over 10 years (1/10 per year). All vehicles start at $0 and receive same inflows.</div>
+        </div>
+        <div class="ctrl">
+            <label>Annual Member Contribution ($)</label>
+            <input type="number" id="annualContrib" value="10000" oninput="calculate()">
+            <div class="hint">Base contribution Year 1, grows at rate below</div>
+        </div>
+        <div class="ctrl">
+            <label>Contribution Growth (%/yr)</label>
+            <div class="rval" id="cgVal">5.0%</div>
+            <input type="range" id="contribGrowth" min="0" max="15" step="0.5" value="5" oninput="syncR('contribGrowth','cgVal','%');calculate()">
+            <div class="hint">Reflects peak earning years ramp</div>
+        </div>
+        <div class="ctrl">
+            <label>Base Growth Rate (%/yr)</label>
+            <div class="rval" id="grVal">9.2%</div>
+            <input type="range" id="growth" min="2" max="20" step="0.1" value="9.2" oninput="syncR('growth','grVal','%');calculate()">
+            <div class="hint">Phase-adjusted per allocation window</div>
+        </div>
+        <div class="ctrl">
+            <label>Unitrust Rate (%/yr)</label>
+            <div class="rval" id="utrVal">4.0%</div>
+            <input type="range" id="unitrust" min="1" max="4" step="0.5" value="4" oninput="syncR('unitrust','utrVal','%');calculate()">
+            <div class="hint">Capped at 4%. Begins Year 20.</div>
+        </div>
+        <div class="ctrl">
+            <label>LLC Tax Drag (%/yr)</label>
+            <div class="rval" id="taxVal">1.5%</div>
+            <input type="range" id="taxDrag" min="0" max="5" step="0.1" value="1.5" oninput="syncR('taxDrag','taxVal','%');calculate()">
+            <div class="hint">K-1 pass-through on unrealized gains</div>
+        </div>
+        <div class="ctrl">
+            <label>REIT Dividend Yield (%/yr)</label>
+            <div class="rval" id="reitVal">5.5%</div>
+            <input type="range" id="reitYield" min="2" max="12" step="0.1" value="5.5" oninput="syncR('reitYield','reitVal','%');calculate()">
+            <div class="hint">40% distributed, 60% reinvested</div>
+        </div>
+        <div class="ctrl">
+            <label>Inflation Adjust</label>
+            <div class="toggle-row" style="margin-top:10px;">
+                <label class="toggle"><input type="checkbox" id="inflToggle" onchange="calculate()"><span class="tog-slider"></span></label>
+                <span id="inflLabel">Off (Nominal)</span>
+            </div>
+            <div class="hint">Real purchasing power at CPI 3%/yr</div>
+        </div>
+    </div>
+    <div class="stats-row" id="statsRow"></div>
+    <div class="glide-visual">
+        <h3>Allocation Glide Path &mdash; Year <span id="glideYearLabel">0</span></h3>
+        <div class="glide-track">
+            <div class="glide-seg gs-growth" id="gGrowth" style="width:70%">Growth 70%</div>
+            <div class="glide-seg gs-income" id="gIncome" style="width:0%"></div>
+            <div class="glide-seg gs-alt" id="gAlt" style="width:30%">Alt 30%</div>
+        </div>
+        <div class="glide-labels"><span>Yr 0</span><span>Yr 20 (glide starts)</span><span>Yr 30</span><span>Yr 50+</span></div>
+        <input type="range" id="glideYear" min="0" max="60" step="1" value="0" oninput="updateGlide(this.value)" style="margin-top:12px;width:100%;">
+    </div>
+    <div class="chart-wrap">
+        <div class="chart-header">
+            <div class="chart-header-left">
+                <h3>50-Year Wealth Trajectory</h3>
+                <p>All vehicles start at $0 &middot; Principal migrates in Yr 0&ndash;9 &middot; Trust withdrawals begin Yr 20</p>
+            </div>
+            <div class="chart-btns">
+                <button class="cbtn active" onclick="setChartType('line',this)">Line</button>
+                <button class="cbtn" onclick="setChartType('bar',this)">Bar</button>
+                <button class="cbtn" onclick="toggleLog(this)">Log Scale</button>
+            </div>
+        </div>
+        <canvas id="wealthChart" height="110"></canvas>
+    </div>
+    <div class="chart-wrap">
+        <div class="chart-header">
+            <div class="chart-header-left">
+                <h3>Cumulative Distribution Flows</h3>
+                <p>Trust unitrust payouts vs REIT dividends over 50 years</p>
+            </div>
+        </div>
+        <canvas id="payoutChart" height="75"></canvas>
+    </div>
+</div>
+
+<!-- MONTE CARLO -->
+<div id="tab-montecarlo" class="panel">
+    <div class="annotation">
+        <strong>Monte Carlo:</strong> 500 GBM paths. Principal migrates in over 10 years. GBM runs in nominal terms &mdash; inflation deflation applied to output percentile bands only (not inside the loop). Pre-computed 10K-path Cholesky reference shown as dashed line scaled to $32.63M at Yr 30.
+    </div>
+    <div class="stats-row" id="mcStatsRow"></div>
+    <div class="chart-wrap">
+        <div class="chart-header">
+            <div class="chart-header-left">
+                <h3>Stochastic Fan Chart &mdash; 500 GBM Paths</h3>
+                <p>Shaded bands = P10/P25/P75/P90 &middot; Dashed = 10K Cholesky reference</p>
+            </div>
+            <div class="chart-btns">
+                <button class="cbtn active" onclick="runMonteCarlo()">&#127922; New Simulation</button>
+            </div>
+        </div>
+        <canvas id="mcFanChart" height="130"></canvas>
+        <div class="mc-legend">
+            <div class="mc-leg-item"><div class="mc-leg-dot" style="background:rgba(0,229,181,.15)"></div>P10&ndash;P90</div>
+            <div class="mc-leg-item"><div class="mc-leg-dot" style="background:rgba(0,229,181,.3)"></div>P25&ndash;P75</div>
+            <div class="mc-leg-item"><div class="mc-leg-dot" style="background:#00e5b5"></div>Median P50</div>
+            <div class="mc-leg-item"><div class="mc-leg-dot" style="background:rgba(255,209,102,.7)"></div>Ref (10K Cholesky)</div>
+        </div>
+    </div>
+    <div class="chart-wrap">
+        <div class="chart-header">
+            <div class="chart-header-left">
+                <h3>Terminal Value Distribution &mdash; Year 30</h3>
+                <p>Histogram of 500-path terminal values</p>
+            </div>
+        </div>
+        <canvas id="mcHistChart" height="90"></canvas>
+    </div>
+    <div class="table-wrap" style="margin-top:24px;">
+        <h3>Reference: 10,000-Path Percentile Table (Real 2026$ &middot; VTI/VXUS/VNQ/RYN)</h3>
+        <table>
+            <thead><tr><th>Pct</th><th>Scenario</th><th>Terminal Value Yr 30</th><th>Mix</th></tr></thead>
+            <tbody>
+                <tr><td><strong>P90</strong></td><td>Bull</td><td class="positive"><strong>$84.41M</strong></td><td>VTI 40% / VXUS 25% / VNQ 20% / RYN 15%</td></tr>
+                <tr><td><strong>P75</strong></td><td>Optimistic</td><td class="positive"><strong>$53.96M</strong></td><td>VTI 40% / VXUS 25% / VNQ 20% / RYN 15%</td></tr>
+                <tr class="hl-row"><td><strong>P50</strong></td><td>Median</td><td class="positive"><strong>$32.63M</strong></td><td>VTI 40% / VXUS 25% / VNQ 20% / RYN 15%</td></tr>
+                <tr><td><strong>P25</strong></td><td>Conservative</td><td><strong>$19.38M</strong></td><td>VTI 40% / VXUS 25% / VNQ 20% / RYN 15%</td></tr>
+                <tr><td><strong>P10</strong></td><td>Bear</td><td class="negative"><strong>$11.69M</strong></td><td>VTI 40% / VXUS 25% / VNQ 20% / RYN 15%</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- BREAKDOWN -->
+<div id="tab-breakdown" class="panel">
+    <div class="table-wrap">
+        <h3>Year-by-Year Breakdown (5-year checkpoints)</h3>
+        <table>
+            <thead><tr><th>Year</th><th>Phase</th><th>Dynasty Trust &#9733;</th><th>LLC</th><th>REIT</th><th>Family LP</th><th>Trust Payout/yr</th><th>G/I/A %</th><th>Best</th></tr></thead>
+            <tbody id="breakdownBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- SCENARIOS -->
+<div id="tab-scenarios" class="panel">
+    <div class="annotation"><strong>Scenario Analysis:</strong> Four market environments. All vehicles start at $0 with same principal migration schedule.</div>
+    <div id="scenarioCards" class="scenario-grid"></div>
+    <div class="chart-wrap">
+        <div class="chart-header">
+            <div class="chart-header-left"><h3>Terminal Wealth by Scenario &mdash; Year 50</h3><p>Dynasty Trust vs benchmark vehicles</p></div>
+        </div>
+        <canvas id="scenarioChart" height="100"></canvas>
+    </div>
+</div>
+
+<!-- STRATEGY -->
+<div id="tab-strategy" class="panel">
+    <div class="perp-note">
+        <div class="pn-icon">&#9878;&#65039;</div>
+        <div>
+            <h4>Perpetuity &amp; Jurisdiction</h4>
+            <p>Dynasty Trusts require a perpetuity-friendly state. Most states limit trusts to ~90 years under the Rule Against Perpetuities.</p>
+            <div class="state-pills">
+                <span class="state-pill">South Dakota &mdash; Indefinite</span>
+                <span class="state-pill">Nevada &mdash; Indefinite</span>
+                <span class="state-pill">Delaware &mdash; 110 yrs+</span>
+                <span class="state-pill">Alaska &mdash; Indefinite</span>
+                <span class="state-pill">Wyoming &mdash; 1,000 yrs</span>
+            </div>
+        </div>
+    </div>
+    <div class="hems-box">
+        <h3>&#128274; Distribution: HEMS + Special Purpose</h3>
+        <p style="font-size:.8em;color:var(--text-soft);line-height:1.6;">All distributions governed by HEMS. Capped at 4% of trust NAV annually (unitrust).</p>
+        <div class="hems-grid">
+            <div class="hems-item"><div class="hi-label">Health</div><div class="hi-val">&#127973; Medical</div><div class="hi-note">Routine + extraordinary; not covered by insurance</div></div>
+            <div class="hems-item"><div class="hi-label">Education</div><div class="hi-val">&#127891; Education</div><div class="hi-note">Tuition, professional development</div></div>
+            <div class="hems-item"><div class="hi-label">Maintenance</div><div class="hi-val">&#127968; Living</div><div class="hi-note">Reasonable standard of living</div></div>
+            <div class="hems-item"><div class="hi-label">Special</div><div class="hi-val">&#128640; Business</div><div class="hi-note">Startup capital, down payments; board approval</div></div>
+        </div>
+        <div class="unitrust-bar">
+            <div class="ub-label">Unitrust Cap</div>
+            <div class="ub-track"><div class="ub-fill" id="ubFill" style="width:100%"></div></div>
+            <div class="ub-note">Max <strong id="ubNote">4.0%</strong>/yr of NAV &middot; Prevents principal erosion</div>
+        </div>
+    </div>
+    <div class="thesis-layout">
+        <div class="thesis-card">
+            <h3>&#128737;&#65039; Asset Protection</h3>
+            <p>Spendthrift provisions mean beneficiaries hold only a right to receive distributions:</p>
+            <ul>
+                <li>Shielded from beneficiary creditors and lawsuits</li>
+                <li>Divorcing spouses cannot claim trust assets</li>
+                <li>Bankruptcy-proof for any individual beneficiary</li>
+                <li>No estate tax at each generational transfer</li>
+            </ul>
+        </div>
+        <div class="thesis-card">
+            <h3>&#128176; Tax Efficiency</h3>
+            <ul>
+                <li>GST exemption planning bypasses estate tax</li>
+                <li>Probate bypass &mdash; faster, private transfer</li>
+                <li>Trust-level tax planning by institutional trustee</li>
+                <li>Single-pool structure avoids fractured ownership</li>
+            </ul>
+        </div>
+        <div class="thesis-card">
+            <h3>&#128202; Phase 1 Investment Thesis</h3>
+            <ul>
+                <li>70% growth equities during 20-yr accumulation</li>
+                <li>30% alternatives: private credit, EAFE, REIT, timber</li>
+                <li>J.P. Morgan: EAFE +1.4%/yr over US over 10&ndash;15 yr horizon</li>
+                <li>No withdrawals maximize compounding in early decades</li>
+            </ul>
+        </div>
+        <div class="thesis-card">
+            <h3>&#127974; Governance</h3>
+            <ul>
+                <li>Institutional trustee manages per investment policy statement</li>
+                <li>Board sign-off required for large alternative allocations</li>
+                <li>Unitrust prevents pot-draining by any single beneficiary</li>
+                <li>Not divided as it passes through generations</li>
+            </ul>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <h3>Allocation by Phase</h3>
+        <table>
+            <thead><tr><th>Phase</th><th>Period</th><th>Growth</th><th>Income</th><th>Alternatives</th><th>Withdrawals</th></tr></thead>
+            <tbody>
+                <tr><td><span class="phase-tag pt1">Phase 1</span></td><td>Yrs 0&ndash;20</td><td class="positive">70%</td><td>&mdash;</td><td style="color:var(--accent4);font-weight:600">30%</td><td class="negative">None</td></tr>
+                <tr class="glide-row"><td><span class="phase-tag pt2">Glide</span></td><td>Yrs 20&ndash;30</td><td>60&ndash;70%</td><td>0&ndash;25%</td><td style="color:var(--accent4);font-weight:600">15&ndash;30%</td><td class="positive">&le;4%/yr begins</td></tr>
+                <tr><td><span class="phase-tag pt2">Phase 2</span></td><td>Yrs 30&ndash;50</td><td class="positive">60%</td><td class="positive">25%</td><td style="color:var(--accent4);font-weight:600">15%</td><td class="positive">&le;4%/yr</td></tr>
+                <tr><td><span class="phase-tag pt3">Phase 3</span></td><td>50+ Yrs</td><td class="positive">&ge;60%</td><td>~25%</td><td style="color:var(--accent4);font-weight:600">~15%</td><td class="positive">Revisited per gen</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+<div class="disclaimer">For educational and planning purposes only. Consult a licensed estate attorney, CPA, and registered investment advisor before establishing any trust or making allocation decisions. Monte Carlo simulations do not guarantee future results.</div>
+
+<script>
+let wChart,pChart,mcFan,mcHist,scChart;
+let logScale=false,chartType='line',mcPaths=null;
+
+function syncR(id,lbl,sfx){document.getElementById(lbl).textContent=parseFloat(document.getElementById(id).value).toFixed(1)+sfx;}
+function toggleTheme(){const h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark';calculate();}
+function switchTab(name,el){
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById('tab-'+name).classList.add('active');
+    if(el)el.classList.add('active');
+    if(name==='scenarios')renderScenarios();
+    if(name==='montecarlo'&&!mcPaths)runMonteCarlo();
+}
+function loadPreset(val){
+    const P={founding:{p:4500000,contrib:10000,cg:5,g:9.2,u:4,t:1.5,r:5.5},conservative:{p:1000000,contrib:5000,cg:3,g:6.5,u:3,t:1.0,r:4.5},aggressive:{p:10000000,contrib:25000,cg:7,g:12,u:4,t:2.0,r:7.0}};
+    const pr=P[val];if(!pr)return;
+    document.getElementById('principal').value=pr.p;
+    document.getElementById('annualContrib').value=pr.contrib;
+    document.getElementById('contribGrowth').value=pr.cg;syncR('contribGrowth','cgVal','%');
+    document.getElementById('growth').value=pr.g;syncR('growth','grVal','%');
+    document.getElementById('unitrust').value=pr.u;syncR('unitrust','utrVal','%');
+    document.getElementById('taxDrag').value=pr.t;syncR('taxDrag','taxVal','%');
+    document.getElementById('reitYield').value=pr.r;syncR('reitYield','reitVal','%');
+    calculate();
+}
+function getP(){
+    return{
+        p:parseFloat(document.getElementById('principal').value)||4500000,
+        contrib:parseFloat(document.getElementById('annualContrib').value)||10000,
+        cg:parseFloat(document.getElementById('contribGrowth').value)/100,
+        r:parseFloat(document.getElementById('growth').value)/100,
+        u:parseFloat(document.getElementById('unitrust').value)/100,
+        tax:parseFloat(document.getElementById('taxDrag').value)/100,
+        reit:parseFloat(document.getElementById('reitYield').value)/100,
+        infl:document.getElementById('inflToggle').checked
+    };
+}
+function phaseRate(baseR,yr){
+    if(yr<20)return baseR+0.005;
+    if(yr<30){const t=(yr-20)/10;return baseR+0.005*(1-t)-0.003*t;}
+    return baseR-0.003;
+}
+function getAlloc(yr){
+    if(yr<20)return{g:70,i:0,a:30};
+    if(yr<30){const t=(yr-20)/10;return{g:Math.round(70-10*t),i:Math.round(25*t),a:Math.round(30-15*t)};}
+    return{g:60,i:25,a:15};
+}
+
+// All vehicles start at 0. Principal migrates in 1/10 per year for years 0-9.
+function simulate(params){
+    const{p,contrib,cg,r,u,tax,reit,infl}=params;
+    const CPI=0.03,mig=p/10;
+    let trust=0,llc=0,reitV=0,lp=0;
+    const labels=[],tArr=[],lArr=[],reArr=[],lpArr=[],tPayout=[],rDiv=[];
+    for(let yr=0;yr<=50;yr++){
+        const def=infl?Math.pow(1+CPI,yr):1;
+        const mc=contrib*Math.pow(1+cg,yr);
+        const migration=yr<10?mig:0;
+        const inflow=mc+migration;
+        labels.push('Y'+yr);
+        tArr.push((trust/def).toFixed(0));
+        lArr.push((llc/def).toFixed(0));
+        reArr.push((reitV/def).toFixed(0));
+        lpArr.push((lp/def).toFixed(0));
+        const payout=yr>=20?trust*u:0;
+        tPayout.push((payout/def).toFixed(0));
+        rDiv.push((reitV*reit/def).toFixed(0));
+        const pr=phaseRate(r,yr);
+        trust+=inflow;
+        trust=yr>=20?trust*(1+pr)-trust*u:trust*(1+pr);
+        llc=(llc+inflow)*(1+r-tax);
+        lp=(lp+inflow)*(1+r-0.01);
+        reitV=(reitV+inflow)*(1+r-reit)+reitV*reit*0.6;
+    }
+    return{labels,tArr,lArr,reArr,lpArr,tPayout,rDiv};
+}
+
+function fmtK(n){n=Math.round(n);if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+n.toLocaleString();}
+const C={trust:{line:'#00e5b5',bg:'rgba(0,229,181,0.12)'},llc:{line:'#7c6fff',bg:'rgba(124,111,255,0.12)'},reit:{line:'#ffd166',bg:'rgba(255,209,102,0.12)'},lp:{line:'#ff6b6b',bg:'rgba(255,107,107,0.12)'}};
+function cd(){const dark=document.documentElement.dataset.theme!=='light';return{grid:dark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.06)',txt:dark?'#6e7a99':'#6b7280'};}
+
+function calculate(){
+    const params=getP();
+    const{labels,tArr,lArr,reArr,lpArr,tPayout,rDiv}=simulate(params);
+    document.getElementById('inflLabel').textContent=params.infl?'On (Real, CPI 3%)':'Off (Nominal)';
+    document.getElementById('ubNote').textContent=(params.u*100).toFixed(1)+'%';
+    document.getElementById('ubFill').style.width=(params.u*25*100)+'%';
+    const t50=parseFloat(tArr[50]),l50=parseFloat(lArr[50]),r50=parseFloat(reArr[50]),lp50=parseFloat(lpArr[50]);
+    const best=[['trust',t50],['llc',l50],['reit',r50],['lp',lp50]].sort((a,b)=>b[1]-a[1])[0][0];
+    const cumPayout=tPayout.reduce((a,b)=>a+parseFloat(b),0);
+    const stats=[
+        {cls:'sc1',lbl:'Dynasty Trust (Yr 50)',val:fmtK(t50),sub:'Phase-adjusted · featured',badge:best==='trust'?'Best ★':'',tip:'<strong>Dynasty Trust</strong>10-yr migration, no withdrawals Yr 0–20, unitrust ≤4%/yr from Yr 20.'},
+        {cls:'sc2',lbl:'LLC Final (Yr 50)',val:fmtK(l50),sub:'Full reinvestment',badge:'',tip:'<strong>LLC</strong>K-1 tax drag on unrealized gains.'},
+        {cls:'sc3',lbl:'REIT Portfolio (Yr 50)',val:fmtK(r50),sub:'Partial reinvestment',badge:'',tip:'<strong>REIT</strong>40% dividends distributed, 60% reinvested.'},
+        {cls:'sc4',lbl:'Family LP (Yr 50)',val:fmtK(lp50),sub:'After 1% carry',badge:'',tip:'<strong>Family LP</strong>1% annual carry/admin fee.'},
+        {cls:'sc5',lbl:'Total Trust Payouts',val:fmtK(cumPayout),sub:'Cumulative unitrust Yr 20–50',badge:'',tip:'<strong>Distributions</strong>Sum of all unitrust payouts Yr 20–50.'},
+        {cls:'sc6',lbl:'Trust vs LLC Delta',val:fmtK(t50-l50),sub:'Terminal alpha at Yr 50',badge:'',tip:'<strong>Delta</strong>Trust minus LLC at Year 50.'},
+    ];
+    document.getElementById('statsRow').innerHTML=stats.map(s=>`
+        <div class="stat-card ${s.cls}">
+            <h4>${s.lbl}</h4><div class="val">${s.val}</div><div class="sub">${s.sub}</div>
+            ${s.badge?`<span class="badge">${s.badge}</span>`:''}
+            <div class="tip-anchor"><span class="tip-icon">?</span><div class="tip-box">${s.tip}</div></div>
+        </div>`).join('');
+    const d=cd();
+    if(wChart)wChart.destroy();
+    wChart=new Chart(document.getElementById('wealthChart').getContext('2d'),{
+        type:chartType,
+        data:{labels,datasets:[
+            {label:'Dynasty Trust',data:tArr,borderColor:C.trust.line,backgroundColor:C.trust.bg,fill:chartType==='line',tension:0.35,pointRadius:0,borderWidth:3},
+            {label:'LLC',data:lArr,borderColor:C.llc.line,backgroundColor:C.llc.bg,fill:chartType==='line',tension:0.35,pointRadius:0,borderWidth:2},
+            {label:'REIT',data:reArr,borderColor:C.reit.line,backgroundColor:C.reit.bg,fill:chartType==='line',tension:0.35,pointRadius:0,borderWidth:2},
+            {label:'Family LP',data:lpArr,borderColor:C.lp.line,backgroundColor:C.lp.bg,fill:chartType==='line',tension:0.35,pointRadius:0,borderWidth:2},
+        ]},
+        options:{responsive:true,animation:{duration:500},
+            plugins:{legend:{labels:{color:d.txt,font:{family:'Inter',size:12},boxWidth:14,padding:16}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fmtK(ctx.raw)}}},
+            scales:{x:{ticks:{color:d.txt,maxTicksLimit:11},grid:{color:d.grid}},y:{type:logScale?'logarithmic':'linear',beginAtZero:!logScale,ticks:{color:d.txt,callback:v=>fmtK(v)},grid:{color:d.grid}}}}
+    });
+    let cumT=0,cumR=0,cTArr=[],cRArr=[];
+    for(let i=0;i<=50;i++){cumT+=parseFloat(tPayout[i]||0);cumR+=parseFloat(rDiv[i]||0);cTArr.push(cumT.toFixed(0));cRArr.push(cumR.toFixed(0));}
+    if(pChart)pChart.destroy();
+    pChart=new Chart(document.getElementById('payoutChart').getContext('2d'),{
+        type:'line',data:{labels,datasets:[
+            {label:'Trust Cumulative Payouts',data:cTArr,borderColor:C.trust.line,backgroundColor:C.trust.bg,fill:true,tension:0.35,pointRadius:0,borderWidth:2},
+            {label:'REIT Cumulative Dividends',data:cRArr,borderColor:C.reit.line,backgroundColor:C.reit.bg,fill:true,tension:0.35,pointRadius:0,borderWidth:2},
+        ]},
+        options:{responsive:true,animation:{duration:400},plugins:{legend:{labels:{color:d.txt,font:{family:'Inter',size:12},boxWidth:14,padding:14}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fmtK(ctx.raw)}}},
+            scales:{x:{ticks:{color:d.txt,maxTicksLimit:11},grid:{color:d.grid}},y:{ticks:{color:d.txt,callback:v=>fmtK(v)},grid:{color:d.grid}}}}
+    });
+    document.getElementById('breakdownBody').innerHTML=[0,5,10,15,20,25,30,35,40,45,50].map(yr=>{
+        const tv=parseFloat(tArr[yr]),lv=parseFloat(lArr[yr]),rv=parseFloat(reArr[yr]),lpv=parseFloat(lpArr[yr]);
+        const bv=[['Trust',tv],['LLC',lv],['REIT',rv],['LP',lpv]].sort((a,b)=>b[1]-a[1])[0][0];
+        let ph,pt;
+        if(yr<20){ph='Accumulation';pt='pt1';}else if(yr<30){ph='Glide';pt='pt2';}else{ph='Distribution';pt='pt2';}
+        if(yr>=50){ph='Legacy';pt='pt3';}
+        const al=getAlloc(yr);
+        return`<tr ${yr===50?'class="hl-row"':yr>=20&&yr<30?'class="glide-row"':''}><td><strong>${yr}</strong></td><td><span class="phase-tag ${pt}">${ph}</span></td><td class="positive"><strong>${fmtK(tv)}</strong></td><td>${fmtK(lv)}</td><td>${fmtK(rv)}</td><td>${fmtK(lpv)}</td><td class="positive">${yr>=20?fmtK(tPayout[yr]):'&mdash;'}</td><td style="font-size:.78em;color:var(--text-muted)">${al.g}/${al.i}/${al.a}</td><td><strong>${bv}</strong></td></tr>`;
+    }).join('');
+}
+
+function updateGlide(yr){
+    yr=parseInt(yr);
+    document.getElementById('glideYearLabel').textContent=yr;
+    const al=getAlloc(yr);
+    const g=document.getElementById('gGrowth'),inc=document.getElementById('gIncome'),a=document.getElementById('gAlt');
+    g.style.width=al.g+'%';g.textContent=al.g>8?'Growth '+al.g+'%':'';
+    inc.style.width=al.i+'%';inc.textContent=al.i>8?'Income '+al.i+'%':'';
+    a.style.width=al.a+'%';a.textContent=al.a>8?'Alt '+al.a+'%':'';
+    document.querySelectorAll('.phase-card').forEach(c=>c.classList.remove('active-phase'));
+    if(yr<20)document.getElementById('phaseCard0').classList.add('active-phase');
+    else if(yr<30)document.getElementById('phaseCard1').classList.add('active-phase');
+    else document.getElementById('phaseCard2').classList.add('active-phase');
+}
+function setChartType(t,btn){chartType=t;document.querySelectorAll('.cbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');calculate();}
+function toggleLog(btn){logScale=!logScale;btn.classList.toggle('active');calculate();}
+function randn(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+function runMonteCarlo(){
+    const params=getP();
+    const N=500,YEARS=30,CPI=0.03,mig=params.p/10;
+    // Simulate in nominal terms
+    const fanPaths=[];
+    for(let n=0;n<N;n++){
+        let v=0;const path=[v];
+        for(let yr=1;yr<=YEARS;yr++){
+            const inflow=params.contrib*Math.pow(1+params.cg,yr)+(yr<=10?mig:0);
+            const mu=phaseRate(params.r,yr);
+            const sig=yr<20?0.17:0.13;
+            v=v*Math.exp((mu-0.5*sig*sig)+sig*randn())+inflow;
+            if(yr>=20)v=v*(1-params.u);
+            if(v<0)v=0;
+            path.push(v);
+        }
+        fanPaths.push(path);
+    }
+    mcPaths=fanPaths;
+    function pct(arr,p){const s=[...arr].sort((a,b)=>a-b);return s[Math.floor(s.length*p/100)];}
+    const labels=Array.from({length:YEARS+1},(_,i)=>'Y'+i);
+    const p10=[],p25=[],p50=[],p75=[],p90=[];
+    for(let yr=0;yr<=YEARS;yr++){
+        const col=fanPaths.map(p=>p[yr]);
+        p10.push(pct(col,10));p25.push(pct(col,25));p50.push(pct(col,50));p75.push(pct(col,75));p90.push(pct(col,90));
+    }
+    // Deflate AFTER simulation
+    function deflate(arr){return arr.map((v,i)=>params.infl?v/Math.pow(1+CPI,i):v);}
+    const rp10=deflate(p10),rp25=deflate(p25),rp50=deflate(p50),rp75=deflate(p75),rp90=deflate(p90);
+    const terminals=fanPaths.map(p=>params.infl?p[YEARS]/Math.pow(1+CPI,YEARS):p[YEARS]);
+    // Reference line: linear from params.p to $32.63M
+    const refLine=labels.map((_,i)=>params.p+(32630000-params.p)*(i/YEARS));
+    const d=cd();
+    const mcStats=[
+        {cls:'sc1',lbl:'Median (P50) Yr 30',val:fmtK(rp50[YEARS]),sub:'500-path GBM'},
+        {cls:'sc2',lbl:'Bull (P90) Yr 30',val:fmtK(rp90[YEARS]),sub:'Top 10% outcome'},
+        {cls:'sc3',lbl:'Bear (P10) Yr 30',val:fmtK(rp10[YEARS]),sub:'Bottom 10% outcome'},
+        {cls:'sc5',lbl:'Ref Median (10K)',val:'$32.63M',sub:'Cholesky GBM, real 2026$'},
+        {cls:'sc4',lbl:'P90 / P50 Ratio',val:(rp90[YEARS]/Math.max(rp50[YEARS],1)).toFixed(2)+'×',sub:'Bull vs median'},
+        {cls:'sc6',lbl:'P10 / Principal',val:(rp10[YEARS]/params.p).toFixed(1)+'×',sub:'Bear floor vs capital'},
+    ];
+    document.getElementById('mcStatsRow').innerHTML=mcStats.map(s=>`<div class="stat-card ${s.cls}"><h4>${s.lbl}</h4><div class="val">${s.val}</div><div class="sub">${s.sub}</div></div>`).join('');
+    if(mcFan)mcFan.destroy();
+    mcFan=new Chart(document.getElementById('mcFanChart').getContext('2d'),{
+        type:'line',
+        data:{labels,datasets:[
+            {label:'P10-P90',data:rp90,borderColor:'transparent',backgroundColor:'rgba(0,229,181,0.07)',fill:'+1',tension:0.4,pointRadius:0},
+            {label:'_p10',data:rp10,borderColor:'transparent',backgroundColor:'transparent',fill:false,pointRadius:0},
+            {label:'P25-P75',data:rp75,borderColor:'transparent',backgroundColor:'rgba(0,229,181,0.18)',fill:'+1',tension:0.4,pointRadius:0},
+            {label:'_p25',data:rp25,borderColor:'transparent',backgroundColor:'transparent',fill:false,pointRadius:0},
+            {label:'Median P50',data:rp50,borderColor:'#00e5b5',backgroundColor:'transparent',fill:false,tension:0.4,pointRadius:0,borderWidth:2.5},
+            {label:'Ref P50 (10K Cholesky)',data:refLine,borderColor:'rgba(255,209,102,0.85)',backgroundColor:'transparent',fill:false,borderDash:[6,4],tension:0.3,pointRadius:0,borderWidth:1.8},
+        ]},
+        options:{responsive:true,animation:{duration:800},
+            plugins:{legend:{labels:{color:d.txt,font:{family:'Inter',size:11},boxWidth:12,padding:14,filter:item=>!item.text.startsWith('_')}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label.startsWith('_')?null:' '+ctx.dataset.label+': '+fmtK(ctx.raw)}}},
+            scales:{x:{ticks:{color:d.txt,maxTicksLimit:10},grid:{color:d.grid}},y:{ticks:{color:d.txt,callback:v=>fmtK(v)},grid:{color:d.grid}}}}
+    });
+    const bins=30;
+    const minT=Math.min(...terminals),maxT=Math.max(...terminals),bw=(maxT-minT)/bins;
+    const counts=Array(bins).fill(0);
+    terminals.forEach(v=>{const b=Math.min(Math.floor((v-minT)/bw),bins-1);counts[b]++;});
+    const binLabels=counts.map((_,i)=>fmtK(minT+(i+0.5)*bw));
+    const colors=counts.map((_,i)=>i<bins*0.1?'rgba(255,107,107,0.75)':i>bins*0.85?'rgba(0,229,181,0.75)':'rgba(124,111,255,0.65)');
+    if(mcHist)mcHist.destroy();
+    mcHist=new Chart(document.getElementById('mcHistChart').getContext('2d'),{
+        type:'bar',data:{labels:binLabels,datasets:[{label:'Paths',data:counts,backgroundColor:colors,borderColor:'transparent',borderRadius:3}]},
+        options:{responsive:true,animation:{duration:600},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' paths'}}},
+            scales:{x:{ticks:{color:d.txt,maxTicksLimit:8},grid:{color:d.grid}},y:{ticks:{color:d.txt},grid:{color:d.grid}}}}
+    });
+}
+
+function renderScenarios(){
+    const params=getP();
+    const scenarios=[{name:'Bear Market',r:0.04},{name:'Base Case',r:params.r},{name:'Bull Market',r:0.13},{name:'Supercycle',r:0.18}];
+    document.getElementById('scenarioCards').innerHTML=scenarios.map(sc=>{
+        const res=simulate({...params,r:sc.r});
+        const tv=parseFloat(res.tArr[50]),lv=parseFloat(res.lArr[50]),rv=parseFloat(res.reArr[50]),lpv=parseFloat(res.lpArr[50]);
+        const mx=Math.max(tv,lv,rv,lpv);
+        const bar=(v,c)=>`<div class="prog-bar"><div class="prog-fill" style="width:${(v/mx*100).toFixed(1)}%;background:${c}"></div></div>`;
+        return`<div class="scenario-card"><h4>${sc.name} (${(sc.r*100).toFixed(1)}%)</h4>
+            <div class="sc-row"><span class="sc-label">Dynasty Trust</span><span class="sc-val" style="color:${C.trust.line}">${fmtK(tv)}</span></div>${bar(tv,C.trust.line)}
+            <div class="sc-row"><span class="sc-label">LLC</span><span class="sc-val" style="color:${C.llc.line}">${fmtK(lv)}</span></div>${bar(lv,C.llc.line)}
+            <div class="sc-row"><span class="sc-label">REIT</span><span class="sc-val" style="color:${C.reit.line}">${fmtK(rv)}</span></div>${bar(rv,C.reit.line)}
+            <div class="sc-row"><span class="sc-label">Family LP</span><span class="sc-val" style="color:${C.lp.line}">${fmtK(lpv)}</span></div>${bar(lpv,C.lp.line)}
+        </div>`;
+    }).join('');
+    const d=cd();
+    if(scChart)scChart.destroy();
+    scChart=new Chart(document.getElementById('scenarioChart').getContext('2d'),{
+        type:'bar',
+        data:{labels:scenarios.map(s=>s.name),datasets:[
+            {label:'Dynasty Trust',data:scenarios.map(s=>parseFloat(simulate({...params,r:s.r}).tArr[50])),backgroundColor:C.trust.bg,borderColor:C.trust.line,borderWidth:2,borderRadius:6},
+            {label:'LLC',data:scenarios.map(s=>parseFloat(simulate({...params,r:s.r}).lArr[50])),backgroundColor:C.llc.bg,borderColor:C.llc.line,borderWidth:2,borderRadius:6},
+            {label:'REIT',data:scenarios.map(s=>parseFloat(simulate({...params,r:s.r}).reArr[50])),backgroundColor:C.reit.bg,borderColor:C.reit.line,borderWidth:2,borderRadius:6},
+            {label:'Family LP',data:scenarios.map(s=>parseFloat(simulate({...params,r:s.r}).lpArr[50])),backgroundColor:C.lp.bg,borderColor:C.lp.line,borderWidth:2,borderRadius:6},
+        ]},
+        options:{responsive:true,plugins:{legend:{labels:{color:d.txt,font:{family:'Inter',size:12},boxWidth:12,padding:14}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fmtK(ctx.raw)}}},
+            scales:{x:{ticks:{color:d.txt},grid:{color:d.grid}},y:{ticks:{color:d.txt,callback:v=>fmtK(v)},grid:{color:d.grid}}}}
+    });
+}
+
+calculate();
+updateGlide(0);
+</script>
+</body>
+</html>

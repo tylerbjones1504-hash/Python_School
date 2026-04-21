@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Project Proposal - Data Visualization</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 25px;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        a {
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        ul {
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .bonus-tag {
+            display: inline-block;
+            background-color: #27ae60;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <span class="bonus-tag">+10 Point 10-K Option</span>
+    <h1>Final Project Proposal</h1>
+
+    <h2>1. Choice of Data Set</h2>
+    <p>
+        <strong>Company:</strong> Coca-Cola Consolidated, Inc. (Ticker: <span class="highlight">COKE</span>)<br>
+        <strong>Source:</strong> 2025 Annual Report (Form 10-K) filed on February 18, 2026.<br>
+        <strong>Direct Link:</strong> <a href="https://www.sec.gov/ix?doc=/Archives/edgar/data/317540/000162828026009057/coke-20251231.htm" target="_blank">SEC EDGAR - COKE 10-K (Fiscal Year 2025)</a>
+    </p>
+
+    <h2>2. Project Description & Data Variables</h2>
+    <p>
+        For this project, I will investigate the <strong>operational efficiency and revenue drivers</strong> of the largest independent Coca-Cola bottler in the United States. In an inflationary environment, it is critical to distinguish between growth driven by price increases versus growth driven by actual consumer demand (volume).
+    </p>
+
+    <h3>Key Research Question:</h3>
+    <p>How do changes in "Price/Mix" compare to "Physical Case Volume" in driving Net Sales growth over the last three fiscal years (2023–2025)?</p>
+
+    <h3>Data Variables to be Analyzed:</h3>
+    <ul>
+        <li><strong>Net Sales:</strong> Total annual revenue.</li>
+        <li><strong>Physical Case Volume:</strong> The actual number of beverage cases sold (found in the <em>Results of Operations</em> section).</li>
+        <li><strong>Cost of Sales (COGS):</strong> Used to calculate and visualize gross margin trends.</li>
+        <li><strong>Operating Income:</strong> To track how effectively revenue growth is being converted into profit.</li>
+    </ul>
+
+    <h3>Intended Visualization Techniques:</h3>
+    <ul>
+        <li><strong>Dual-Axis Comparison:</strong> A combination chart using bars for <em>Physical Case Volume</em> and a line for <em>Net Sales</em> to highlight the "Price/Mix" gap.</li>
+        <li><strong>Trend Analysis:</strong> Line charts showing <em>Gross Margin %</em> over time to visualize the impact of raw material costs (aluminum, sugar, etc.) mentioned in the report.</li>
+    </ul>
+</div>
+
+</body>
+</html>

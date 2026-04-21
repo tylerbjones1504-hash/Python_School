@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ER Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="mermaid">
+graph TD
+    %% ENTITIES
+    PROF[PROFESSOR]
+    PROJ[PROJECT]
+    DEPT[DEPARTMENT]
+
+    %% ATTRIBUTES FOR PROFESSOR
+    P_SSN((<u>SSN</u>)) --- PROF
+    P_Name((Name)) --- PROF
+    P_Age((Age)) --- PROF
+    P_Rank((Rank)) --- PROF
+    P_Spec((Specialty)) --- PROF
+
+    %% ATTRIBUTES FOR PROJECT
+    Pr_Num((<u>Project_Num</u>)) --- PROJ
+    Pr_Spon((Sponsor)) --- PROJ
+    Pr_Budg((Budget)) --- PROJ
+
+    %% ATTRIBUTES FOR DEPARTMENT
+    D_Num((<u>Dept_Num</u>)) --- DEPT
+    D_Name((Name)) --- DEPT
+    D_Office((Main_Office)) --- DEPT
+
+    %% RELATIONSHIPS
+    
+    %% WORKS_ON (M:N)
+    PROF --- |M| WORKS_ON{WORKS_ON}
+    WORKS_ON --- |N| PROJ
+    
+    %% MANAGES/PI (1:N)
+    %% Constraint: Project MUST have a PI (Total Participation)
+    PROF --- |1| MANAGES{MANAGES / PI}
+    MANAGES === |N| PROJ
+
+    %% BELONGS_TO (N:1)
+    %% Constraint: Dept has 1+ Profs
+    PROF --- |N| BELONGS_TO{BELONGS_TO}
+    BELONGS_TO === |1| DEPT
+
+    %% CHAIRS (1:1)
+    %% Constraint: 1 Chair per Dept
+    PROF --- |1| CHAIRS{CHAIRS}
+    CHAIRS --- |1| DEPT
+
+    %% STYLING TO MIMIC CHEN NOTATION
+    classDef entity fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef relationship fill:#fce4ec,stroke:#880e4f,stroke-width:2px,shape:rhombus;
+    classDef attribute fill:#fff,stroke:#333,stroke-width:1px;
+
+    class PROF,PROJ,DEPT entity;
+    class WORKS_ON,MANAGES,BELONGS_TO,CHAIRS relationship;
+    class P_SSN,P_Name,P_Age,P_Rank,P_Spec,Pr_Num,Pr_Spon,Pr_Budg,D_Num,D_Name,D_Office attribute;
+        </div>
+    </div>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+</body>
+</html>

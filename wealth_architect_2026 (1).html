@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wealth Architect 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0f1a;
+            --surface: #13162a;
+            --surface2: #1a1e35;
+            --border: rgba(255,255,255,0.07);
+            --text: #e8ecf4;
+            --text-muted: #7a84a0;
+            --accent: #6c63ff;
+            --accent2: #00d4aa;
+            --accent3: #ff6b6b;
+            --accent4: #ffd166;
+            --accent5: #06d6a0;
+            --glow: rgba(108,99,255,0.18);
+            --glow2: rgba(0,212,170,0.15);
+            --radius: 14px;
+            --card-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        [data-theme="light"] {
+            --bg: #f0f2fc;
+            --surface: #ffffff;
+            --surface2: #eef0fa;
+            --border: rgba(0,0,0,0.08);
+            --text: #1a1e35;
+            --text-muted: #6b7280;
+            --glow: rgba(108,99,255,0.08);
+            --glow2: rgba(0,212,170,0.08);
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, color 0.3s, border-color 0.3s; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 24px;
+        }
+        /* BG grid */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: -1;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.5;
+        }
+
+        .wrapper { max-width: 1100px; margin: auto; }
+
+        /* Header */
+        header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3em; box-shadow: 0 0 18px var(--glow);
+        }
+        .logo-text h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.4em; font-weight: 700; }
+        .logo-text span { font-size: 0.75em; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        .theme-btn, .preset-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 14px; border-radius: 8px;
+            cursor: pointer; font-size: 0.82em; font-family: inherit;
+            font-weight: 500; transition: all 0.2s;
+        }
+        .theme-btn:hover, .preset-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+        .tab {
+            padding: 9px 20px; border-radius: 8px; cursor: pointer;
+            font-size: 0.85em; font-weight: 600; border: 1px solid var(--border);
+            background: var(--surface2); color: var(--text-muted); transition: all 0.2s;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 0 16px var(--glow); }
+
+        /* Controls Grid */
+        .controls-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 14px; margin-bottom: 24px;
+        }
+        .control-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 16px;
+            box-shadow: var(--card-shadow);
+        }
+        .control-card label {
+            font-size: 0.75em; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--text-muted); display: block; margin-bottom: 8px;
+        }
+        .control-card .hint { font-size: 0.7em; color: var(--text-muted); margin-top: 4px; }
+        input[type=number], input[type=range], select {
+            width: 100%; background: var(--surface2);
+            border: 1px solid var(--border); border-radius: 7px;
+            color: var(--text); font-family: 'Inter', sans-serif;
+            font-size: 0.95em; padding: 8px 10px;
+            outline: none; transition: border 0.2s;
+        }
+        input[type=number]:focus, select:focus { border-color: var(--accent); }
+        input[type=range] { padding: 4px 0; cursor: pointer; accent-color: var(--accent); }
+        .range-val { font-size: 1em; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+
+        /* Stat cards */
+        .stats-row {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px; margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 18px 16px;
+            box-shadow: var(--card-shadow); position: relative; overflow: hidden;
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        }
+        .stat-card.c1::before { background: linear-gradient(90deg, var(--accent), #9f99ff); }
+        .stat-card.c2::before { background: linear-gradient(90deg, var(--accent2), #6effdf); }
+        .stat-card.c3::before { background: linear-gradient(90deg, var(--accent3), #ff9f9f); }
+        .stat-card.c4::before { background: linear-gradient(90deg, var(--accent4), #ffe89f); }
+        .stat-card.c5::before { background: linear-gradient(90deg, var(--accent5), #80ffe8); }
+        .stat-card h4 { font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px; }
+        .stat-card .val { font-family: 'Space Grotesk', sans-serif; font-size: 1.4em; font-weight: 700; }
+        .stat-card .sub { font-size: 0.72em; color: var(--text-muted); margin-top: 4px; }
+        .stat-card .badge {
+            display: inline-block; font-size: 0.65em; padding: 2px 7px;
+            border-radius: 20px; font-weight: 600; margin-top: 6px;
+        }
+        .badge.up { background: rgba(0,212,170,0.15); color: var(--accent2); }
+        .badge.down { background: rgba(255,107,107,0.15); color: var(--accent3); }
+
+        /* Chart container */
+        .chart-wrap {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 24px;
+            box-shadow: var(--card-shadow); margin-bottom: 24px;
+        }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .chart-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1em; }
+        .chart-header .chart-controls { display: flex; gap: 8px; }
+        .chart-btn {
+            font-size: 0.75em; padding: 5px 12px; border-radius: 6px;
+            border: 1px solid var(--border); background: var(--surface2);
+            color: var(--text-muted); cursor: pointer; font-family: inherit; transition: all 0.2s;
+        }
+        .chart-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* Panel sections */
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* Breakdown table */
+        .breakdown-wrap {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 20px; box-shadow: var(--card-shadow);
+            overflow-x: auto;
+        }
+        .breakdown-wrap h3 { font-family: 'Space Grotesk', sans-serif; margin-bottom: 14px; font-size: 0.95em; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.82em; }
+        th { text-align: left; padding: 8px 12px; background: var(--surface2); color: var(--text-muted); font-weight: 600; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.06em; }
+        td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--surface2); }
+        .positive { color: var(--accent2); font-weight: 600; }
+        .negative { color: var(--accent3); font-weight: 600; }
+        .highlight-row td { background: rgba(108,99,255,0.06); }
+
+        /* Scenario compare */
+        .scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .scenario-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 18px; box-shadow: var(--card-shadow);
+        }
+        .scenario-card h4 { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 10px; }
+        .scenario-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.83em; }
+        .scenario-row span:last-child { font-weight: 700; }
+
+        /* Inflation toggle */
+        .toggle-row { display: flex; align-items: center; gap: 10px; font-size: 0.83em; }
+        .toggle { position: relative; width: 36px; height: 20px; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .slider-tog {
+            position: absolute; cursor: pointer; inset: 0;
+            background: var(--surface2); border-radius: 20px;
+            border: 1px solid var(--border); transition: 0.3s;
+        }
+        .slider-tog::before {
+            content: ''; position: absolute; width: 14px; height: 14px;
+            left: 2px; top: 2px; border-radius: 50%;
+            background: var(--text-muted); transition: 0.3s;
+        }
+        input:checked + .slider-tog { background: var(--accent); border-color: var(--accent); }
+        input:checked + .slider-tog::before { transform: translateX(16px); background: #fff; }
+
+        /* Progress bars */
+        .progress-bar { background: var(--surface2); border-radius: 4px; height: 6px; margin-top: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+        /* Annotation */
+        .annotation {
+            background: var(--surface2); border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0; padding: 12px 16px;
+            font-size: 0.82em; color: var(--text-muted); margin-bottom: 20px;
+        }
+        .annotation strong { color: var(--text); }
+
+
+        /* Tooltips */
+        .tooltip-wrap { position: relative; display: inline-flex; align-items: center; gap: 5px; }
+        .tooltip-icon {
+            width: 15px; height: 15px; border-radius: 50%;
+            background: var(--surface2); border: 1px solid var(--border);
+            color: var(--text-muted); font-size: 0.65em; font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: help; flex-shrink: 0; transition: background 0.2s;
+        }
+        .tooltip-icon:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .tooltip-box {
+            display: none;
+            position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+            background: #1a1e35; color: #e8ecf4;
+            border: 1px solid rgba(108,99,255,0.35);
+            border-radius: 9px; padding: 10px 13px;
+            font-size: 0.76em; line-height: 1.5;
+            width: 220px; z-index: 999;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+        .tooltip-box::after {
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border: 6px solid transparent; border-top-color: rgba(108,99,255,0.35);
+        }
+        .tooltip-icon:hover + .tooltip-box,
+        .tooltip-wrap:hover .tooltip-box { display: block; }
+        .tooltip-box strong { color: #9f99ff; display: block; margin-bottom: 3px; }
+
+        /* Stat card tooltips */
+        .stat-card .tooltip-wrap { position: absolute; top: 14px; right: 14px; }
+        .stat-card { position: relative; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .scenario-grid { grid-template-columns: 1fr; }
+            header { flex-direction: column; gap: 14px; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon">ðŸ›ï¸</div>
+            <div class="logo-text">
+                <h1>Wealth Architect</h1>
+                <span>Multi-Generational Strategy Simulator</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <select id="presetSelect" class="preset-btn" onchange="loadPreset(this.value)" style="padding:8px 12px;">
+                <option value="">âš¡ Presets</option>
+                <option value="conservative">Conservative ($500K, 6%)</option>
+                <option value="balanced">Balanced ($1.5M, 9.2%)</option>
+                <option value="aggressive">Aggressive ($5M, 12%)</option>
+                <option value="dynasty">Dynasty ($10M, 8%)</option>
+            </select>
+            <button class="theme-btn" onclick="toggleTheme()">â˜€ï¸ / ðŸŒ™</button>
+        </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('simulator')">ðŸ“ˆ Simulator</div>
+        <div class="tab" onclick="switchTab('breakdown')">ðŸ“‹ Year Breakdown</div>
+        <div class="tab" onclick="switchTab('scenarios')">âš–ï¸ Scenario Analysis</div>
+        <div class="tab" onclick="switchTab('about')">â„¹ï¸ Strategy Guide</div>
+    </div>
+
+    <!-- SIMULATOR TAB -->
+    <div id="tab-simulator" class="panel active">
+
+        <div class="annotation">
+            <strong>How it works:</strong> Adjust parameters below to compare how a <strong>Perpetual LLC</strong> (full reinvestment) stacks up against a <strong>Dynasty Trust</strong> (delayed unitrust payouts), a <strong>REIT Portfolio</strong>, and a <strong>Family LP</strong> over a 50-year horizon.
+        </div>
+
+        <div class="controls-grid">
+            <div class="control-card">
+                <div class="tooltip-wrap"><label>Initial Capital ($)</label><span class="tooltip-icon">?</span><div class="tooltip-box"><strong>Initial Capital</strong>The lump sum invested across all four wealth vehicles at Year 0. All vehicles start with the same amount for a fair comparison.</div></div>
+                <input type="number" id="principal" value="1500000" oninput="calculate()">
+                <div class="hint">Starting investment across all vehicles</div>
+            </div>
+            <div class="control-card">
+                <div class="tooltip-wrap"><label>Annual Growth Rate (%)</label><span class="tooltip-icon">?</span><div class="tooltip-box"><strong>Annual Growth Rate</strong>The pre-tax, pre-fee portfolio growth rate assumed each year. Historical S&P 500 average is ~10%. Adjust for your asset mix.</div></div>
+                <div class="range-val" id="growthVal">9.2%</div>
+                <input type="range" id="growth" min="2" max="20" step="0.1" value="9.2" oninput="syncRange('growth','growthVal','%'); calculate()">
+            </div>
+            <div class="control-card">
+                <div class="tooltip-wrap"><label>Withdrawal Delay (yrs)</label><span class="tooltip-icon">?</span><div class="tooltip-box"><strong>Withdrawal Delay</strong>Years before the Dynasty Trust begins unitrust payouts. During this period, all growth compounds fully â€” maximizing the base before distributions begin.</div></div>
+                <div class="range-val" id="delayVal">10 yrs</div>
+                <input type="range" id="delay" min="0" max="20" step="1" value="10" oninput="syncRange('delay','delayVal',' yrs'); calculate()">
+            </div>
+            <div class="control-card">
+                <div class="tooltip-wrap"><label>Withdrawal Rate (%)</label><span class="tooltip-icon">?</span><div class="tooltip-box"><strong>Unitrust Withdrawal Rate</strong>Percentage of the Trust's current value paid out each year after the delay period. A 4% rate follows the classic "safe withdrawal rate" research.</div></div>
+                <div class="range-val" id="payoutVal">4.0%</div>
+                <input type="range" id="payout" min="1" max="10" step="0.5" value="4" oninput="syncRange('payout','payoutVal','%'); calculate()">
+            </div>
+            <div class="control-card">
+                <div class="tooltip-wrap"><label>Tax Drag on LLC (%/yr)</label><span class="tooltip-icon">?</span><div class="tooltip-box"><strong>LLC Tax Drag</strong>Annual effective tax cost on pass-through K-1 income, even if not distributed. Typically 1â€“2% for a diversified portfolio. Reduces LLC's net compounding rate.</div></div>
+                <div class="range-val" id="taxVal">1.5%</div>
+                <input type="range" id="taxDrag" min="0" max="5" step="0.1" value="1.5" oninput="syncRange('taxDrag','taxVal','%'); calculate()">
+            </div>
+            <div class="control-card">
+                <div class="tooltip-wrap"><label>REIT Dividend Yield (%)</label><span class="tooltip-icon">?</span><div class="tooltip-box"><strong>REIT Dividend Yield</strong>REITs must distribute 90% of taxable income. This slider sets the annual yield. 40% of dividends are modeled as taken out; 60% reinvested.</div></div>
+                <div class="range-val" id="reitVal">5.5%</div>
+                <input type="range" id="reitYield" min="2" max="12" step="0.1" value="5.5" oninput="syncRange('reitYield','reitVal','%'); calculate()">
+            </div>
+            <div class="control-card">
+                <div class="tooltip-wrap"><label>Family LP Carry Fee (%)</label><span class="tooltip-icon">?</span><div class="tooltip-box"><strong>Family LP Carry Fee</strong>Annual management/administrative fee drag on the LP. Includes legal, accounting, and GP management costs. Typically 0.5â€“2% depending on complexity.</div></div>
+                <div class="range-val" id="lpFeeVal">1.0%</div>
+                <input type="range" id="lpFee" min="0" max="3" step="0.1" value="1.0" oninput="syncRange('lpFee','lpFeeVal','%'); calculate()">
+            </div>
+            <div class="control-card">
+                <div class="tooltip-wrap"><label>Inflation Adjust</label><span class="tooltip-icon">?</span><div class="tooltip-box"><strong>Inflation Adjustment</strong>When ON, all values are deflated by CPI (3%/yr) to show real purchasing power. A nominal $10M in 50 years â‰ˆ $2.3M in today's dollars at 3% CPI.</div></div>
+                <div class="toggle-row" style="margin-top:8px;">
+                    <label class="toggle"><input type="checkbox" id="inflationToggle" onchange="calculate()"><span class="slider-tog"></span></label>
+                    <span id="inflationLabel">Off (Nominal)</span>
+                </div>
+                <div class="hint">Show real purchasing power (CPI 3%)</div>
+            </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stats-row" id="statsRow"></div>
+
+        <!-- Chart -->
+        <div class="chart-wrap">
+            <div class="chart-header">
+                <h3>50-Year Wealth Trajectory</h3>
+                <div class="chart-controls">
+                    <button class="chart-btn active" onclick="setChartType('line',this)">Line</button>
+                    <button class="chart-btn" onclick="setChartType('bar',this)">Bar</button>
+                    <button class="chart-btn" onclick="toggleLog(this)">Log Scale</button>
+                </div>
+            </div>
+            <canvas id="wealthChart" height="110"></canvas>
+        </div>
+
+        <!-- CAGR mini chart -->
+        <div class="chart-wrap">
+            <div class="chart-header"><h3>Cumulative Total Payout (Trust + REIT)</h3></div>
+            <canvas id="payoutChart" height="80"></canvas>
+        </div>
+    </div>
+
+    <!-- BREAKDOWN TAB -->
+    <div id="tab-breakdown" class="panel">
+        <div class="breakdown-wrap">
+            <h3>Year-by-Year Breakdown (every 5 years)</h3>
+            <table id="breakdownTable">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>LLC Value</th>
+                        <th>Trust Value</th>
+                        <th>REIT Value</th>
+                        <th>Family LP</th>
+                        <th>Trust Payout (yr)</th>
+                        <th>REIT Dividend (yr)</th>
+                        <th>Best Vehicle</th>
+                    </tr>
+                </thead>
+                <tbody id="breakdownBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SCENARIOS TAB -->
+    <div id="tab-scenarios" class="panel">
+        <div class="annotation">
+            <strong>Scenario Analysis:</strong> See how each vehicle performs across 4 economic environments â€” bear, base, bull, and supercycle.
+        </div>
+        <div id="scenarioCards" class="scenario-grid"></div>
+        <div class="chart-wrap">
+            <div class="chart-header"><h3>Final Wealth by Scenario (Year 50)</h3></div>
+            <canvas id="scenarioChart" height="100"></canvas>
+        </div>
+    </div>
+
+    <!-- ABOUT TAB -->
+    <div id="tab-about" class="panel">
+        <div class="breakdown-wrap">
+            <h3>Strategy Guide & Assumptions</h3>
+            <br>
+            <table>
+                <thead><tr><th>Vehicle</th><th>Structure</th><th>Key Advantage</th><th>Key Risk</th><th>Best For</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Perpetual LLC</strong></td><td>Pass-through entity, no mandatory distributions</td><td>Maximum compounding via full reinvestment; control retained by manager</td><td>Tax drag on K-1 income even if not distributed; state-level variations</td><td>Active reinvestors, business operators</td></tr>
+                    <tr><td><strong>Dynasty Trust</strong></td><td>Irrevocable trust, unitrust or CRUT structure</td><td>Asset protection, estate tax bypass across generations, spendthrift clause</td><td>Irrevocable; inflexibility; trustee fees; state rule-against-perpetuities</td><td>Multi-generational preservation, estate planning</td></tr>
+                    <tr><td><strong>REIT Portfolio</strong></td><td>Publicly traded or private REIT basket</td><td>Liquidity, diversification, forced dividends (90% REIT payout rule)</td><td>Interest rate sensitivity; sector concentration; dividend tax drag</td><td>Income-focused investors, inflation hedgers</td></tr>
+                    <tr><td><strong>Family LP</strong></td><td>Limited partnership with GP control + LP interests</td><td>Valuation discounts (20â€“40%) for gift/estate; centralized management</td><td>IRS scrutiny on lack-of-economic-substance; carry fee drag</td><td>Family governance, gift/estate tax planning</td></tr>
+                </tbody>
+            </table>
+            <br>
+            <p style="font-size:0.82em; color:var(--text-muted);">
+                <strong>Disclaimer:</strong> This simulator is for educational purposes only. Consult a licensed CPA, estate attorney, and financial advisor before making structural decisions involving these vehicles. Growth rates, tax drag, and fees are illustrative assumptions.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let wealthChart, payoutChart, scenarioChart;
+    let logScale = false;
+    let currentChartType = 'line';
+
+    function syncRange(id, labelId, suffix) {
+        const v = parseFloat(document.getElementById(id).value);
+        document.getElementById(labelId).textContent = v + suffix;
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+        if (wealthChart) calculate();
+    }
+
+    function switchTab(name) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        event.target.classList.add('active');
+        if (name === 'scenarios') renderScenarios();
+    }
+
+    function loadPreset(val) {
+        const presets = {
+            conservative: { p:500000, g:6, d:5, w:3, t:1, r:4.5, f:0.5 },
+            balanced:     { p:1500000, g:9.2, d:10, w:4, t:1.5, r:5.5, f:1.0 },
+            aggressive:   { p:5000000, g:12, d:7, w:5, t:2, r:7, f:1.5 },
+            dynasty:      { p:10000000, g:8, d:15, w:3.5, t:1, r:5, f:0.75 }
+        };
+        const pr = presets[val]; if (!pr) return;
+        document.getElementById('principal').value = pr.p;
+        document.getElementById('growth').value = pr.g; syncRange('growth','growthVal','%');
+        document.getElementById('delay').value = pr.d; syncRange('delay','delayVal',' yrs');
+        document.getElementById('payout').value = pr.w; syncRange('payout','payoutVal','%');
+        document.getElementById('taxDrag').value = pr.t; syncRange('taxDrag','taxVal','%');
+        document.getElementById('reitYield').value = pr.r; syncRange('reitYield','reitVal','%');
+        document.getElementById('lpFee').value = pr.f; syncRange('lpFee','lpFeeVal','%');
+        calculate();
+    }
+
+    function setChartType(type, btn) {
+        currentChartType = type;
+        document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        calculate();
+    }
+
+    function toggleLog(btn) {
+        logScale = !logScale;
+        btn.classList.toggle('active');
+        calculate();
+    }
+
+    function getParams() {
+        return {
+            p: parseFloat(document.getElementById('principal').value),
+            r: parseFloat(document.getElementById('growth').value) / 100,
+            d: parseInt(document.getElementById('delay').value),
+            w: parseFloat(document.getElementById('payout').value) / 100,
+            taxDrag: parseFloat(document.getElementById('taxDrag').value) / 100,
+            reitY: parseFloat(document.getElementById('reitYield').value) / 100,
+            lpFee: parseFloat(document.getElementById('lpFee').value) / 100,
+            inflation: document.getElementById('inflationToggle').checked
+        };
+    }
+
+    function simulate(params) {
+        const { p, r, d, w, taxDrag, reitY, lpFee, inflation } = params;
+        const CPI = 0.03;
+        let llc = p, trust = p, reit = p, lp = p;
+        const llcArr=[], trustArr=[], reitArr=[], lpArr=[];
+        const trustPayout=[], reitDiv=[], labels=[];
+
+        for (let t = 0; t <= 50; t++) {
+            const deflator = inflation ? Math.pow(1+CPI, t) : 1;
+            labels.push('Y'+t);
+            llcArr.push((llc/deflator).toFixed(0));
+            trustArr.push((trust/deflator).toFixed(0));
+            reitArr.push((reit/deflator).toFixed(0));
+            lpArr.push((lp/deflator).toFixed(0));
+            trustPayout.push(t >= d ? ((trust * w)/deflator).toFixed(0) : 0);
+            reitDiv.push(((reit * reitY)/deflator).toFixed(0));
+
+            llc = llc * (1 + r - taxDrag);
+            lp  = lp  * (1 + r - lpFee);
+            if (t >= d) { trust = trust * (1 + r) - trust * w; } else { trust = trust * (1+r); }
+            reit = reit * (1 + r - reitY) + reit * reitY * 0.6; // dividends partially reinvested (40% taken)
+        }
+        return { labels, llcArr, trustArr, reitArr, lpArr, trustPayout, reitDiv };
+    }
+
+    function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+    function fmtK(n) {
+        n = Math.round(n);
+        if (n >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+        if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+        return '$' + n.toLocaleString();
+    }
+
+    const COLORS = {
+        llc:   { line:'#6c63ff', bg:'rgba(108,99,255,0.12)' },
+        trust: { line:'#00d4aa', bg:'rgba(0,212,170,0.12)' },
+        reit:  { line:'#ffd166', bg:'rgba(255,209,102,0.12)' },
+        lp:    { line:'#ff6b6b', bg:'rgba(255,107,107,0.12)' },
+    };
+
+    function chartDefaults() {
+        const dark = document.documentElement.dataset.theme !== 'light';
+        return {
+            gridColor: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)',
+            textColor: dark ? '#7a84a0' : '#6b7280',
+        };
+    }
+
+    function calculate() {
+        const params = getParams();
+        const { labels, llcArr, trustArr, reitArr, lpArr, trustPayout, reitDiv } = simulate(params);
+        document.getElementById('inflationLabel').textContent = params.inflation ? 'On (Real, CPI 3%)' : 'Off (Nominal)';
+
+        const vals = {
+            llc: parseFloat(llcArr[50]), trust: parseFloat(trustArr[50]),
+            reit: parseFloat(reitArr[50]), lp: parseFloat(lpArr[50])
+        };
+        const best = Object.entries(vals).sort((a,b)=>b[1]-a[1])[0][0];
+        const totalTrustPayout = trustPayout.reduce((a,b)=>a+parseFloat(b),0);
+        const totalReitDiv = reitDiv.reduce((a,b)=>a+parseFloat(b),0);
+
+        // Stat cards
+        const statDefs = [
+            { id:'c1', label:'LLC Final Value', val: fmtK(vals.llc), sub:'Full reinvestment', badge: best==='llc'?'Best':'', up: best==='llc', tip:'LLC retains all growth with no mandatory distributions. Tax drag reduces net compounding vs. gross rate.' },
+            { id:'c2', label:'Trust Final Value', val: fmtK(vals.trust), sub:'After withdrawals', badge: best==='trust'?'Best':'', up: best==='trust', tip:'Trust value after annual unitrust payouts begin. Irrevocable structure protects assets across generations.' },
+            { id:'c3', label:'REIT Final Value', val: fmtK(vals.reit), sub:'Partial reinvestment', badge: best==='reit'?'Best':'', up: best==='reit', tip:'REIT value with 40% of dividends withdrawn annually. Remaining 60% of yield reinvests alongside price appreciation.' },
+            { id:'c4', label:'Family LP Final', val: fmtK(vals.lp), sub:'After carry fees', badge: best==='lp'?'Best':'', up: best==='lp', tip:'Family LP value after annual carry/management fee drag. Valuation discounts can reduce estate tax exposure.' },
+            { id:'c5', label:'Total Trust Payouts', val: fmtK(totalTrustPayout), sub:'Cumulative distributions', badge: '', up: true, tip:'Sum of all annual unitrust distributions from the Dynasty Trust over the full 50-year horizon.' },
+        ];
+        const statsRow = document.getElementById('statsRow');
+        statsRow.innerHTML = statDefs.map(s => `
+            <div class="stat-card ${s.id}">
+                <h4>${s.label}</h4>
+                <div class="val">${s.val}</div>
+                <div class="sub">${s.sub}</div>
+                ${s.badge ? `<span class="badge ${s.up?'up':'down'}">${s.up?'â–²':'â–¼'} ${s.badge}</span>` : ''}
+                <div class="tooltip-wrap" style="position:absolute;top:12px;right:12px;">
+                    <span class="tooltip-icon">?</span>
+                    <div class="tooltip-box" style="left:auto;right:0;transform:none;">${s.tip}</div>
+                </div>
+            </div>
+        `).join('');
+
+        // Main chart
+        const cd = chartDefaults();
+        if (wealthChart) wealthChart.destroy();
+        wealthChart = new Chart(document.getElementById('wealthChart').getContext('2d'), {
+            type: currentChartType,
+            data: {
+                labels,
+                datasets: [
+                    { label:'LLC (Retention)', data:llcArr, borderColor:COLORS.llc.line, backgroundColor:COLORS.llc.bg, fill: currentChartType==='line', tension:0.3, pointRadius:0, borderWidth:2.5 },
+                    { label:'Dynasty Trust', data:trustArr, borderColor:COLORS.trust.line, backgroundColor:COLORS.trust.bg, fill: currentChartType==='line', tension:0.3, pointRadius:0, borderWidth:2.5 },
+                    { label:'REIT Portfolio', data:reitArr, borderColor:COLORS.reit.line, backgroundColor:COLORS.reit.bg, fill: currentChartType==='line', tension:0.3, pointRadius:0, borderWidth:2.5 },
+                    { label:'Family LP', data:lpArr, borderColor:COLORS.lp.line, backgroundColor:COLORS.lp.bg, fill: currentChartType==='line', tension:0.3, pointRadius:0, borderWidth:2.5 },
+                ]
+            },
+            options: {
+                responsive:true, animation:{ duration:600 },
+                plugins: {
+                    legend: { labels:{ color:cd.textColor, font:{family:'Inter',size:12}, boxWidth:16, padding:16 }},
+                    tooltip: { callbacks:{ label: ctx => ' ' + ctx.dataset.label + ': ' + fmtK(ctx.raw) }}
+                },
+                scales: {
+                    x:{ ticks:{ color:cd.textColor, maxTicksLimit:11 }, grid:{ color:cd.gridColor }},
+                    y:{ type: logScale?'logarithmic':'linear', beginAtZero:!logScale,
+                        ticks:{ color:cd.textColor, callback:v=>fmtK(v) }, grid:{ color:cd.gridColor }}
+                }
+            }
+        });
+
+        // Payout chart
+        if (payoutChart) payoutChart.destroy();
+        // cumulative
+        let cumTrust=[], cumReit=[], cumT=0, cumR=0;
+        for(let i=0;i<=50;i++){
+            cumT+=parseFloat(trustPayout[i]||0);
+            cumR+=parseFloat(reitDiv[i]||0);
+            cumTrust.push(cumT.toFixed(0));
+            cumReit.push(cumR.toFixed(0));
+        }
+        payoutChart = new Chart(document.getElementById('payoutChart').getContext('2d'), {
+            type:'line',
+            data:{labels,datasets:[
+                {label:'Cumulative Trust Payouts',data:cumTrust,borderColor:COLORS.trust.line,backgroundColor:COLORS.trust.bg,fill:true,tension:0.3,pointRadius:0,borderWidth:2},
+                {label:'Cumulative REIT Dividends',data:cumReit,borderColor:COLORS.reit.line,backgroundColor:COLORS.reit.bg,fill:true,tension:0.3,pointRadius:0,borderWidth:2},
+            ]},
+            options:{
+                responsive:true, animation:{duration:400},
+                plugins:{legend:{labels:{color:cd.textColor,font:{family:'Inter',size:12},boxWidth:16,padding:16}},
+                    tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fmtK(ctx.raw)}}
+                },
+                scales:{
+                    x:{ticks:{color:cd.textColor,maxTicksLimit:11},grid:{color:cd.gridColor}},
+                    y:{ticks:{color:cd.textColor,callback:v=>fmtK(v)},grid:{color:cd.gridColor}}
+                }
+            }
+        });
+
+        // Breakdown table
+        const tbody = document.getElementById('breakdownBody');
+        const rows = [];
+        const checkpoints = [0,5,10,15,20,25,30,35,40,45,50];
+        for (const t of checkpoints) {
+            const best = [
+                ['LLC', parseFloat(llcArr[t])],
+                ['Trust', parseFloat(trustArr[t])],
+                ['REIT', parseFloat(reitArr[t])],
+                ['LP', parseFloat(lpArr[t])]
+            ].sort((a,b)=>b[1]-a[1])[0][0];
+            rows.push(`<tr ${t===50?'class="highlight-row"':''}>
+                <td>${t}</td>
+                <td>${fmtK(llcArr[t])}</td>
+                <td>${fmtK(trustArr[t])}</td>
+                <td>${fmtK(reitArr[t])}</td>
+                <td>${fmtK(lpArr[t])}</td>
+                <td class="positive">${t>=params.d ? fmtK(trustPayout[t]) : 'â€”'}</td>
+                <td class="positive">${fmtK(reitDiv[t])}</td>
+                <td><strong>${best}</strong></td>
+            </tr>`);
+        }
+        tbody.innerHTML = rows.join('');
+    }
+
+    function renderScenarios() {
+        const params = getParams();
+        const scenarios = [
+            { name:'ðŸ» Bear Market', r:0.04, color:'#ff6b6b' },
+            { name:'ðŸ“Š Base Case', r:params.r, color:'#6c63ff' },
+            { name:'ðŸ‚ Bull Market', r:0.13, color:'#00d4aa' },
+            { name:'ðŸš€ Supercycle', r:0.18, color:'#ffd166' }
+        ];
+        const cards = document.getElementById('scenarioCards');
+        cards.innerHTML = scenarios.map(s => {
+            const sp = {...params, r:s.r};
+            const res = simulate(sp);
+            const llcF=parseFloat(res.llcArr[50]), trustF=parseFloat(res.trustArr[50]), reitF=parseFloat(res.reitArr[50]), lpF=parseFloat(res.lpArr[50]);
+            const maxV = Math.max(llcF, trustF, reitF, lpF);
+            const bar = (v,c) => `<div class="progress-bar"><div class="progress-fill" style="width:${(v/maxV*100).toFixed(1)}%;background:${c}"></div></div>`;
+            return `<div class="scenario-card">
+                <h4>${s.name} (${(s.r*100).toFixed(1)}% growth)</h4>
+                <div class="scenario-row"><span>LLC</span><span style="color:${COLORS.llc.line}">${fmtK(llcF)}</span></div>${bar(llcF,COLORS.llc.line)}
+                <div class="scenario-row" style="margin-top:8px"><span>Dynasty Trust</span><span style="color:${COLORS.trust.line}">${fmtK(trustF)}</span></div>${bar(trustF,COLORS.trust.line)}
+                <div class="scenario-row" style="margin-top:8px"><span>REIT</span><span style="color:${COLORS.reit.line}">${fmtK(reitF)}</span></div>${bar(reitF,COLORS.reit.line)}
+                <div class="scenario-row" style="margin-top:8px"><span>Family LP</span><span style="color:${COLORS.lp.line}">${fmtK(lpF)}</span></div>${bar(lpF,COLORS.lp.line)}
+            </div>`;
+        }).join('');
+
+        // Scenario bar chart
+        const cd = chartDefaults();
+        if (scenarioChart) scenarioChart.destroy();
+        scenarioChart = new Chart(document.getElementById('scenarioChart').getContext('2d'), {
+            type:'bar',
+            data:{
+                labels:scenarios.map(s=>s.name),
+                datasets:[
+                    {label:'LLC',data:scenarios.map(s=>parseFloat(simulate({...params,r:s.r}).llcArr[50])),backgroundColor:COLORS.llc.bg,borderColor:COLORS.llc.line,borderWidth:2,borderRadius:6},
+                    {label:'Trust',data:scenarios.map(s=>parseFloat(simulate({...params,r:s.r}).trustArr[50])),backgroundColor:COLORS.trust.bg,borderColor:COLORS.trust.line,borderWidth:2,borderRadius:6},
+                    {label:'REIT',data:scenarios.map(s=>parseFloat(simulate({...params,r:s.r}).reitArr[50])),backgroundColor:COLORS.reit.bg,borderColor:COLORS.reit.line,borderWidth:2,borderRadius:6},
+                    {label:'LP',data:scenarios.map(s=>parseFloat(simulate({...params,r:s.r}).lpArr[50])),backgroundColor:COLORS.lp.bg,borderColor:COLORS.lp.line,borderWidth:2,borderRadius:6},
+                ]
+            },
+            options:{
+                responsive:true,
+                plugins:{legend:{labels:{color:cd.textColor,font:{family:'Inter',size:12},boxWidth:14}},
+                    tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fmtK(ctx.raw)}}
+                },
+                scales:{
+                    x:{ticks:{color:cd.textColor},grid:{color:cd.gridColor}},
+                    y:{ticks:{color:cd.textColor,callback:v=>fmtK(v)},grid:{color:cd.gridColor}}
+                }
+            }
+        });
+    }
+
+    calculate();
+</script>
+</body>
+</html>
